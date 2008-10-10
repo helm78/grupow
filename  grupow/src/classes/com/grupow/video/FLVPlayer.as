@@ -28,13 +28,12 @@ package com.grupow.video {
 	* @version 0.01
 	*/
 	
-	/*
-	 * TODO escuchar al listeneer de REMOVE_FROM_STAGE???
-	 * TODO tomar las medidas de width/height del bg_mc si existe?¿
-	 * TODO meter el try catch en _vidStream.play();???
-	 * TODO darle bubble al NetStatusEvent.NET_STATUS y AsyncErrorEvent.ASYNC_ERROR
-	 * 
-	 * */
+	// TODO escuchar al listeneer de REMOVE_FROM_STAGE???
+	// TODO tomar las medidas de width/height del bg_mc si existe?¿
+	// TODO meter el try catch en _vidStream.play();???
+	// TODO darle bubble al NetStatusEvent.NET_STATUS y AsyncErrorEvent.ASYNC_ERROR
+	 
+	
 	
 	public class FLVPlayer extends Sprite
 	{
