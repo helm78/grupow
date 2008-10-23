@@ -1,4 +1,14 @@
 ﻿
+/**
+ * 
+ * Grupow FLVPlayer 
+ * Copyright (c) 2008 ruranga@grupow.com
+ * 
+ * Released under MIT license:
+ * http://www.opensource.org/licenses/mit-license.php
+ * 
+ **/
+
 package com.grupow.video {
 	
 	import com.grupow.video.FLVPlayerMetadataEvent;

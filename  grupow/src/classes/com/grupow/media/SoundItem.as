@@ -1,4 +1,15 @@
-﻿package com.grupow.media 
+﻿
+/**
+ * 
+ * Grupow SoundItem
+ * Copyright (c) 2008 ruranga@grupow.com
+ * 
+ * Released under MIT license:
+ * http://www.opensource.org/licenses/mit-license.php
+ * 
+ **/
+
+package com.grupow.media 
 {
 	import flash.media.Sound;
 	import flash.media.SoundChannel;
@@ -70,7 +81,7 @@
 			try {
 				_channel.soundTransform = _soundTransform;
 			}catch (e:*) {
-				trace("SoundItem Error: SoundChannel is not defined, you need to start playing");
+				//trace("SoundItem Error: SoundChannel is not defined, you need to start playing");
 			}
 		}
 			

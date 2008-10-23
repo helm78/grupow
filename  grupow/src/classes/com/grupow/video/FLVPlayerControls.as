@@ -1,4 +1,15 @@
-﻿package com.grupow.video 
+﻿
+/**
+ * 
+ * Grupow FLVPlayer 
+ * Copyright (c) 2008 ruranga@grupow.com
+ * 
+ * Released under MIT license:
+ * http://www.opensource.org/licenses/mit-license.php
+ * 
+ **/
+
+package com.grupow.video 
 {
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
