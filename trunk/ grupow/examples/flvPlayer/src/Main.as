@@ -25,7 +25,7 @@
 			player_mc.videoWidth = 400;
 			player_mc.videoHeight = 300;
 			
-			player_mc.debugMode = true;
+			player_mc.debugMode = false;
 			
 			player_mc.autoRewind = true;
 			
@@ -43,6 +43,9 @@
 			
 			//normal
 			player_mc.play("assets/video/sample.flv");
+			
+			captions.player = player_mc;
+			captions.source = "timed_text.xml"; 
 			
 			//cuePoints
 			//player_mc.play("assets/video/betina.flv");
@@ -99,7 +102,13 @@
 					
 				case video3_btn:
 				
+					captions.dispose();
+					removeChild(captions);
+					captions = null;
+					
 					player_mc.dispose();
+					removeChild(player_mc);
+					player_mc = null;
 					
 					break;
 					

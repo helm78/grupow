@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+ <tt xmlns="http://www.w3.org/2006/04/ttaf1" xmlns:tts="http://www.w3.org/2006/04/ttaf1#styling">
+  <head>
+   <styling>
+      <style id="1" tts:textAlign="center" tts:fontFamily="_sans" tts:fontSize="18" tts:fontWeight="bold" tts:color="#FFFF00FF"/>
+      <style id="2" tts:backgroundColor="#00000000"/>
+      <style id="3" tts:backgroundColor="#00FFFFFF"/>
+   </styling>
+  </head>
+  <body>
+  	<div>
+      <p begin="00:00:01.00" dur="00:00:03.00" >se nos aproxíma un partido muy dificil <br/> contra el departamento de ventas</p>
+      <p begin="00:00:05.00" dur="00:00:02.00" >y sabe que....la voy a despedir</p>
+      <p begin="00:00:06.00" dur="00:00:03.00" >porque quiero que ested viaje</p>
+      <p begin="00:00:09.00" dur="00:00:02.00" >y que le deje el lugar a estos jovenes</p>
+      <p begin="00:00:11.00" dur="00:00:02.00" >vayase a ibiza, haga museo!</p>
+    </div>
+  </body>
+</tt>
