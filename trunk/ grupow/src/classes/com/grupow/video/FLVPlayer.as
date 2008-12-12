@@ -356,17 +356,25 @@ package com.grupow.video {
 						//continue playing
 						_playing = true;
 						_playingTimer.start();
+						
+						this.dispatchEvent(new FLVPlayerEvent(FLVPlayerEvent.BUFFER_COMPLETE, false, false, this.time));
+						
 						break; 
 						
 					case "NetStream.Buffer.Empty":
 						
 						//buffering
 						
-						debug(">>NetStream.Buffer.Empty");
+						debug("NetStream.Buffer.Empty");
+						debug("_isComplete: ", _isComplete);
 						
-						_playing = false;
-						_playingTimer.stop();
-						this.dispatchEvent(new FLVPlayerEvent(FLVPlayerEvent.BUFFERING,false,false,this.time));						
+						
+						if (!_isComplete) {
+							_playing = false;
+							_playingTimer.stop();
+							this.dispatchEvent(new FLVPlayerEvent(FLVPlayerEvent.BUFFERING, false, false, this.time));
+						}
+						
 						break; 
 						
 					case "NetStream.Buffer.Flush":
@@ -423,7 +431,7 @@ package com.grupow.video {
 		private function debug(...rest):void
 		{
 			if(this.debugMode)
-				trace(rest);
+				trace("[FLVPlayer] " + rest);
 		}
 		
 		public function get contentPath():String 
@@ -588,6 +596,7 @@ package com.grupow.video {
 			//*/
 			if (_isComplete) {
 				//this.stop();
+				_isComplete = false;
 				_vidStream.seek(0);
 			}
 			//*/
