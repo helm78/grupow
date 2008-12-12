@@ -60,15 +60,24 @@ package com.grupow.video
 		{
 			_player = value;
 			_player.addEventListener(FLVPlayerEvent.PLAYHEAD_UPDATE, update_handler, false, 0, true);
+			_player.addEventListener(FLVPlayerEvent.COMPLETE, complete_handler, false, 0, true);
+			
+			this.x = player.x;
+			this.y = this.player.y + this.player.height - (this.height + 5);
 			
 		}
-		
+			
 		public function get source():String { return _source; }
 		
 		public function set source(value:String):void 
 		{
 			_source = value;
 			xml_loader.load(new URLRequest(_source));
+		}
+		
+		private function complete_handler(e:FLVPlayerEvent):void 
+		{
+			setCaption("");
 		}
 		
 		private function update_handler(e:FLVPlayerEvent):void 
@@ -94,9 +103,6 @@ package com.grupow.video
 		{
 			output_txt.htmlText = text;
 			output_txt.width = this.player.width;
-			
-			this.x = player.x;
-			this.y = this.player.y + this.player.height - this.height;
 		}
 		
 		public function dispose():void
@@ -110,6 +116,7 @@ package com.grupow.video
 			xml_loader.removeEventListener(Event.COMPLETE, xmlLoaded);
 			
 			_player.removeEventListener(FLVPlayerEvent.PLAYHEAD_UPDATE, update_handler);
+			_player.removeEventListener(FLVPlayerEvent.COMPLETE, complete_handler);
 			_player = null;
 		}
 	}

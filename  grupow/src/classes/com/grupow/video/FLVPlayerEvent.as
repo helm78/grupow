@@ -24,6 +24,7 @@ package com.grupow.video {
 		public static const PLAYHEAD_UPDATE:String = "playheadeUpdate";
 		public static const READY:String = "ready";
 		public static const BUFFERING:String = "buffering";
+		public static const BUFFER_COMPLETE:String = "buffer_complete";
 		public static const COMPLETE:String = "complete";
 		public static const AUTO_REWOUND:String = "autoRewound";
 		public static const STOPPED:String = "stoopped";
