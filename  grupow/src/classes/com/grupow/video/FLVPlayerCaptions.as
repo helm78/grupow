@@ -40,10 +40,11 @@ package com.grupow.video
 			captions = [];
 			xml_loader = new URLLoader();
 			xml_loader.addEventListener(Event.COMPLETE, xmlLoaded, false, 0, true);
-			
-			
+					
 			output_txt.autoSize = TextFieldAutoSize.CENTER;
 			
+			this.mouseChildren = false;
+			this.mouseEnabled = false;
 			
 		}
 		

@@ -43,8 +43,7 @@ package com.grupow.video
 			_min = 0;
 			_max = 1;
 			slider_btn.addEventListener(MouseEvent.MOUSE_DOWN, onDown_handler, false, 0, true);
-			stage.addEventListener(MouseEvent.MOUSE_UP, onUp_handler);
-			
+
 			progressarBar.scaleX = 0;
 			playheadTimeBar.scaleX = position / max;
 		}
@@ -69,14 +68,17 @@ package com.grupow.video
 			_isDragging = true;
 			offset = slider_btn.mouseX;
 			stage.addEventListener(MouseEvent.MOUSE_MOVE, onMove_handler);
-			this.dispatchEvent(new SeekBarEvent(SeekBarEvent.BEGIN_SCRUB,false,false,position));
+			this.dispatchEvent(new SeekBarEvent(SeekBarEvent.BEGIN_SCRUB, false, false, position));
+			stage.addEventListener(MouseEvent.MOUSE_UP, onUp_handler,false,0, true);
 		}
 
 		private function onUp_handler(e:MouseEvent):void
 		{
 			_isDragging = false;
 			stage.removeEventListener(MouseEvent.MOUSE_MOVE, onMove_handler, false);
-			this.dispatchEvent(new SeekBarEvent(SeekBarEvent.END_SCRUB,false,false,position));
+			stage.removeEventListener(MouseEvent.MOUSE_UP, onUp_handler);
+			this.dispatchEvent(new SeekBarEvent(SeekBarEvent.END_SCRUB, false, false, position));
+			
 		}
 
 		private function onMove_handler(e:MouseEvent):void
@@ -113,7 +115,8 @@ package com.grupow.video
 			
 			this.progressarBar.scaleX = value;
 			
-			_xMax = this.progressarBar.scaleX < 1 ? this.progressarBar.width - 5 : this.progressarBar.width;
+			_xMax = track.width;
+			//this.progressarBar.scaleX < 1 ? this.progressarBar.width - 5 : this.progressarBar.width;
 		}
 		
 		public function get max():Number
