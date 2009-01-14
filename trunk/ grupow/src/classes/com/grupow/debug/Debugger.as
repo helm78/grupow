@@ -2,7 +2,7 @@
 
 /**
  * 
- * Grupow BasicButton
+ * Grupow Debugger
  * Copyright (c) 2008 ruranga@grupow.com
  * 
  * Released under MIT license:
