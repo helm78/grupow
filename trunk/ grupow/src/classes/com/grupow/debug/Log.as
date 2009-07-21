@@ -58,38 +58,57 @@
 			
 		static public function log(level:int, message:String, ...rest):void
 		{
+			var _params:Array = [level,message];
+			_params = _params.concat(rest);
+			
 			if(verbose)
-				logger.log(level, message, rest);
+				logger.log.apply(null, _params);
+				
 		}
 		
 		static public function debug(message:String, ...rest):void
 		{
+			var _params:Array = [message];
+			_params = _params.concat(rest);
+			
 			if(verbose)
-				logger.debug(message, rest);
+				logger.debug.apply(null, _params);
 		}
 		
 		static public function error(message:String, ...rest):void
 		{
+			var _params:Array = [message];
+			_params = _params.concat(rest);
+			
 			if(verbose)
-				logger.error(message, rest);
+				logger.error.apply(null, _params);
 		}
 		
 		static public function fatal(message:String, ...rest):void
 		{
+			var _params:Array = [message];
+			_params = _params.concat(rest);
+			
 			if(verbose)
-				logger.fatal(message, rest);
+				logger.fatal.apply(null, _params);
 		}
 		
 		static public function info(message:String, ...rest):void
 		{
+			var _params:Array = [message];
+			_params = _params.concat(rest);
+			
 			if(verbose)
-				logger.info(message, rest);
+				logger.info.apply(null, _params);
 		}
 		
 		static public function warn(message:String, ...rest):void
 		{
+			var _params:Array = [message];
+			_params = _params.concat(rest);
+			
 			if(verbose)
-				logger.warn(message, rest);
+				logger.warn.apply(null, _params);
 		}
 		
 		
