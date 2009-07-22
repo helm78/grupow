@@ -1,4 +1,15 @@
-﻿package com.grupow.commands 
+﻿
+/**
+ * 
+ * Grupow GetURLCommand
+ * Copyright (c) 2009 ruranga@grupow.com
+ * 
+ * Released under MIT license:
+ * http://www.opensource.org/licenses/mit-license.php
+ * 
+ **/
+
+package com.grupow.commands 
 {
 	import flash.net.navigateToURL;
 	import flash.net.URLRequest;
