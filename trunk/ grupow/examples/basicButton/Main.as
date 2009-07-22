@@ -2,7 +2,6 @@
 	
 	import flash.display.MovieClip;
 	import flash.events.MouseEvent;
-	import mx.utils.ObjectDumper;
 	import flash.events.Event;
 	
 	
@@ -24,22 +23,13 @@
 		
 		private function basicButtonTest():void
 		{
-			var btn:BasicButton = new ConferencesButton();
-			btn.x  = 200;
-			btn.y  = 200;
-			btn.label = "Hello BasicButton";
-			btn.index = 1;
-			btn.addEventListener(MouseEvent.CLICK, function (e:MouseEvent){trace(e.target,e.target.label,e.target.index)}, false, 0, true);
-			this.addChild(btn);
-			
-			//Extends BasicButton
-			var abtn:CategoryButton = new AwardsButton();
-			abtn.x  = 200;
-			abtn.y  = 220;
-			abtn.label = "Hello CategoryButton";
-			abtn.index = 2;
-			abtn.addEventListener(MouseEvent.CLICK, function (e:MouseEvent){trace(e.target,e.target.label,e.target.index)}, false, 0, true);
-			this.addChild(abtn);
+			btn01_mc.data.index = 1;
+			btn01_mc.addEventListener(MouseEvent.CLICK, onClick_handler, false, 0, true);
+		}
+		
+		private function onClick_handler(e:MouseEvent):void 
+		{
+			trace("index: ",BasicButton(e.target).data.index);
 		}
 	}
 	
