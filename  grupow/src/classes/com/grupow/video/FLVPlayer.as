@@ -80,30 +80,88 @@ package com.grupow.video {
 		private var _stopped:Boolean;
 		
 		private var _loop:Boolean;
+		private var _initNS:Boolean;
 		
-		public function FLVPlayer(width:int = 320, height:int = 240)
+		private var _targetWidth:Number;
+		private var _targetHeight:Number;
+		private var _background:Sprite;
+		private var _video_mask:Sprite;
+		private var _video_container:Sprite;
+		private var _align:String;
+		private var _scaleMode:String;
+		private var _disposed:Boolean;
+		
+		public function FLVPlayer(width:int = 320, height:int = 240, initConn:Boolean = true )
 		{
 			debug("FLVPlayer Class");
 			
 			_video = new Video(width, height);
+			_video.width = width
+			_video.height = height;
 			
-			_videoWidth = _video.width
-			_videoHeight = _video.height;
+			_videoWidth = -1;
+			_videoHeight = -1;
 			
-			try {
-				
-				bg_mc.visible = false;
-				
-			}catch(e:*){
-			}
-			
-			addChild(_video);
-			
-			this.graphics.clear();
-			this.graphics.clear();
+			_align = FLVPlayerAlign.CENTER;
+			_scaleMode = FLVPlayerScaleMode.EXACT_FIT;
 			
 			init();
-			initConnection();
+			
+			if(initConn)
+				initConnection();
+				
+			this.addEventListener(Event.ADDED_TO_STAGE, added_handler, false, 0, true);
+			this.addEventListener(Event.REMOVED_FROM_STAGE, removed_handler, false, 0, true);
+			
+		}
+		
+		private function removed_handler(e:Event):void 
+		{
+			removeEventListener(Event.REMOVED_FROM_STAGE, removed_handler);
+			this.dispose();
+		}
+		
+		private function added_handler(e:Event):void 
+		{
+			//trace("__added_handler__");
+			//trace("_targetWidth: ", this.width);
+			//trace("_targetHeight: ", this.height);
+			//					
+			_targetWidth = this.width;
+			_targetHeight = this.height;
+			_video.width = _targetWidth
+			_video.height = _targetHeight;
+			//
+			this.removeChildAt(0);
+			
+			_background = new Sprite();			
+			_video_mask =  new Sprite();
+						
+			_video_container =  new Sprite();
+			_video_container.addChild(_video);
+				
+			addChild(_background);
+			addChild(_video_container);
+			addChild(_video_mask);
+			
+			_video_container.mask = _video_mask;
+			
+			draw();
+			
+			removeEventListener(Event.ADDED_TO_STAGE, added_handler);
+		}
+		
+		private function draw():void
+		{
+			_background.graphics.clear();
+			_background.graphics.beginFill(0, 1);
+			_background.graphics.drawRect(0, 0, _targetWidth, _targetHeight);
+			_background.graphics.endFill();
+			
+			_video_mask.graphics.clear();
+			_video_mask.graphics.beginFill(0x00ff00, 0.2);
+			_video_mask.graphics.drawRect(0, 0, _targetWidth, _targetHeight);
+			_video_mask.graphics.endFill();
 		}
 		
 		private function init():void
@@ -166,7 +224,7 @@ package com.grupow.video {
 				
 				if (!_startPlayingEventFired) {
 					
-					trace(">>_startPlayingEventFired");
+					debug(">>_startPlayingEventFired");
 					
 					_startPlayingEventFired = true;
 					
@@ -179,21 +237,26 @@ package com.grupow.video {
 
 		public function dispose():void
 		{	
-			this.stop();
-					
-			_loadertimer.stop();
-			_loadertimer.removeEventListener(TimerEvent.TIMER, onLoadProgress);
-			_loadertimer = null;
-			
-			_playingTimer.stop();
-			_playingTimer.removeEventListener(TimerEvent.TIMER, updatePlayhead_handler);
-			_playingTimer = null;
-			
-			_updateSeekTimeTimer.stop();
-			_updateSeekTimeTimer.removeEventListener(TimerEvent.TIMER, updateSeekTime_handler);
-			_updateSeekTimeTimer = null;
-			
-			killConnection();
+			if (!_disposed) {
+				
+				_disposed = true;
+				
+				this.stop();
+						
+				_loadertimer.stop();
+				_loadertimer.removeEventListener(TimerEvent.TIMER, onLoadProgress);
+				_loadertimer = null;
+				
+				_playingTimer.stop();
+				_playingTimer.removeEventListener(TimerEvent.TIMER, updatePlayhead_handler);
+				_playingTimer = null;
+				
+				_updateSeekTimeTimer.stop();
+				_updateSeekTimeTimer.removeEventListener(TimerEvent.TIMER, updateSeekTime_handler);
+				_updateSeekTimeTimer = null;
+				
+				killConnection();
+			}
 
 		}
 				
@@ -201,25 +264,23 @@ package com.grupow.video {
 		{
 			_video.clear();
 			
-			//if (_vidConnection != null)
-			//{
-			_vidConnection.close();
-			_vidConnection.removeEventListener(NetStatusEvent.NET_STATUS, onNetStatus_handler);
-			_vidConnection.removeEventListener(AsyncErrorEvent.ASYNC_ERROR, onAsyncError_handler);
+			if (_vidConnection != null) {
+				_vidConnection.close();
+				_vidConnection.removeEventListener(NetStatusEvent.NET_STATUS, onNetStatus_handler);
+				_vidConnection.removeEventListener(AsyncErrorEvent.ASYNC_ERROR, onAsyncError_handler);
 				
-			_vidConnection = null;
-			//}
+				_vidConnection = null;
+			}
 			
-			//if (_vidStream != null)
-			//{
-			_vidStream.close();
-			_vidStream.removeEventListener(NetStatusEvent.NET_STATUS, onNetStatus_handler);
-			_vidStream.removeEventListener(AsyncErrorEvent.ASYNC_ERROR, onAsyncError_handler);
+			if (_vidStream != null) {
+				_vidStream.close();
+				_vidStream.removeEventListener(NetStatusEvent.NET_STATUS, onNetStatus_handler);
+				_vidStream.removeEventListener(AsyncErrorEvent.ASYNC_ERROR, onAsyncError_handler);
 				
-			_vidStream = null;
-			
+				_vidStream = null;
+			}
 			_video = null;
-			//}
+			
 		}
 		
 		private function initConnection():void
@@ -233,6 +294,7 @@ package com.grupow.video {
 			
 			_vidStream = new NetStream(_vidConnection);
 			_vidStream.client = _infoClient;
+			_vidStream.bufferTime = 5;
 			_vidStream.addEventListener(NetStatusEvent.NET_STATUS, onNetStatus_handler, false, 0, true);
 			_vidStream.addEventListener(AsyncErrorEvent.ASYNC_ERROR, onAsyncError_handler, false, 0, true);
 			
@@ -244,6 +306,31 @@ package com.grupow.video {
 			_vidStream.soundTransform = _soundTrans;		
 			
 			debug("_vidStream.soundTransform.volume: " + _vidStream.soundTransform.volume);
+		}
+		
+		public function setNetStream(ns:NetStream, metadata:Object = null):void
+		{
+			if (!_initNS) {
+						
+				_initNS = true;
+				
+				_vidStream = ns;
+				_vidStream.client = _infoClient;
+				_vidStream.addEventListener(NetStatusEvent.NET_STATUS, onNetStatus_handler, false, 0, true);
+				_vidStream.addEventListener(AsyncErrorEvent.ASYNC_ERROR, onAsyncError_handler, false, 0, true);
+				
+				_video.attachNetStream(_vidStream);
+				
+				_vidStream.soundTransform = _soundTrans;
+				
+				if (metadata != null) {
+					
+					this._metaData = metadata;
+					_duration = this._metaData.duration;
+					
+				}
+			}
+				
 		}
 		
 		private function onAsyncError_handler(e:AsyncErrorEvent):void 
@@ -392,20 +479,93 @@ package com.grupow.video {
 		
 		private function onMetaData(info:Object):void
 		{
-			debug("info.duration: " + info.duration);
+			//*/
+			//debug(onCuePoint:);
+			debug("-----------------------");
+			debug("::onMetaData::");
+			for (var name:String in info) {
+				debug(name + ":" + info[name]);
+			}
+			debug("-----------------------");
+			//*/
+			
+			/*/
+			//resize(_background, info.width, info.height, _targetWidth, _targetHeight, "cropped_fit");
+			resize(_video_container, info.width, info.height, _targetWidth, _targetHeight, "fit");
+			
+			//"fit"
+			//"cropped_fit"
+			//trace(_background.width);
+			//trace(_background.height);
+			//addChild(_background);
+			//_background.x = _targetWidth/2 - _background.width/2;
+			//_background.y = _targetHeight / 2 - _background.height / 2;
+						
+			_video_container.x = _targetWidth/2 - _video_container.width/2;
+			_video_container.y = _targetHeight / 2 - _video_container.height / 2;
+			
+			//*/
+			
 			_duration = info.duration;
 			_metaData = info;
+			
+			
+			resize();
+			
 			this.dispatchEvent(new FLVPlayerMetadataEvent(FLVPlayerMetadataEvent.METADATA_RECEIVED,false,false,_metaData));
+		}
+		
+		private function resize():void
+		{
+			var theVideoWidth:int = !isNaN(_metaData.width) ? int(_metaData.width) : _targetWidth;
+			var theVideoHeight:int = !isNaN(_metaData.height) ? int(_metaData.height) : _targetHeight;
+			 
+			switch (_scaleMode) {
+				case FLVPlayerScaleMode.NO_SCALE:
+					
+					this._video.width = theVideoWidth;
+					this._video.height = theVideoHeight;
+					
+					break;
+					
+				case FLVPlayerScaleMode.EXACT_FIT:
+					
+					this._video.width = this._targetWidth;
+					this._video.height = this._targetHeight;
+					break;
+					
+				case FLVPlayerScaleMode.MAINTAIN_ASPECT_RATIO:
+				default:
+				
+					var newWidth:int = int(theVideoWidth * _targetHeight / theVideoHeight);
+					var newHeight:int = int(theVideoHeight * _targetWidth / theVideoWidth);
+										
+					if (newHeight < _targetHeight) {
+						this._video.width = _targetWidth;
+						this._video.height = newHeight;
+					} else if (newWidth < _targetWidth) {
+						this._video.width = newWidth;
+						this._video.height = _targetHeight;
+					} else {
+						this._video.width = _targetWidth;
+						this._video.height = _targetHeight;
+					}
+
+			}
+				
+			_video_container.x = _targetWidth / 2 - _video_container.width / 2;
+			_video_container.y = _targetHeight / 2 - _video_container.height / 2;
+		
 		}
 		 
 		private function onCuePoint(info:Object):void
 		{
-			/*/
+			//*/
 			//debug(onCuePoint:);
 			debug("-----------------------");
 			debug("::onCuePoint::");
 			for (var name:String in info) {
-				trace(name + ":" + info[name]);
+				debug(name + ":" + info[name]);
 			}
 			debug("-----------------------");
 			//*/
@@ -525,19 +685,56 @@ package com.grupow.video {
 			_debugMode = value;
 		}
 		
-		public function get videoWidth():Number { return _videoWidth; }
+		public function get videoWidth():Number
+		{ 
+			if(_videoWidth > 0)
+				return _videoWidth;
+				
+			if (_metaData != null && !isNaN(_metaData.width) && !isNaN(_metaData.height)) {
+				if (_metaData.width == _metaData.height) {
+					return _video.videoWidth;
+				} else {
+					return int(_metaData.width);
+				}
+			}
+			
+			return -1;
+		}
 		
+		/*/
 		public function set videoWidth(value:Number):void 
 		{
-			this._video.width = _videoWidth = value;
+			this._video.width = this._targetWidth = value;
+			this.draw();
+			//this.resize();
+		}
+		//*/
+	
+		public function get videoHeight():Number
+		{
+			if(_videoHeight > 0)
+				return _videoHeight;
+				
+			if (_metaData != null && !isNaN(_metaData.width) && !isNaN(_metaData.height)) {
+				if (_metaData.width == _metaData.height) {
+					return _video.videoHeight;
+				} else {
+					return int(_metaData.height);
+				}
+			}
+			
+			return -1;
+			
 		}
 		
-		public function get videoHeight():Number { return _videoHeight; }
-		
+		/*/
 		public function set videoHeight(value:Number):void 
 		{
-			this._video.height = _videoHeight = value;
+			this._video.height = this._targetHeight = value;
+			this.draw();
+			//this.resize();
 		}
+		//*/
 		
 		public function get loop():Boolean { return _loop; }
 		
@@ -546,6 +743,13 @@ package com.grupow.video {
 		{
 			this.autoRewind = false;
 			_loop = value;
+		}
+		
+		public function get scaleMode():String { return _scaleMode; }
+		
+		public function set scaleMode(value:String):void 
+		{
+			_scaleMode = value;
 		}
 			
 		public function play(value:String = ""):void
@@ -559,6 +763,8 @@ package com.grupow.video {
 			
 			_oTime = -1;
 			_cTime = -1;
+			
+			_stopped = false;
 			
 			_isComplete = false;
 			
@@ -590,7 +796,6 @@ package com.grupow.video {
 		
 		public function resume():void
 		{
-			trace("__resume__");
 			debug(">>>resume");
 			
 			//*/
@@ -608,6 +813,8 @@ package com.grupow.video {
 			_vidStream.resume();
 			
 			_playingTimer.start();
+			
+			this.dispatchEvent(new FLVPlayerEvent(FLVPlayerEvent.RESUME,false,false,this.time));
 			//*/
 		}
 		
@@ -654,8 +861,6 @@ package com.grupow.video {
 			}
 		}
 		
-		
-		
 		private function stop_handler():void
 		{
 			_stopped = true;
@@ -690,29 +895,7 @@ package com.grupow.video {
 			this._vidConnection.close();
 			this._vidStream.close();
 		}
-		
-		/* INTERFACE flash.events.IEventDispatcher */
-		/*/
-		
-		public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void {
-			_eventDispatcher.addEventListener(type, listener, useCapture, priority, useWeakReference);
-		}
-		public function dispatchEvent(event:Event):Boolean {
-			return _eventDispatcher.dispatchEvent(event);
-		}
-				
-		public function hasEventListener(type:String):Boolean {
-			return _eventDispatcher.hasEventListener(type);
-		}
-				
-		public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void {
-			_eventDispatcher.removeEventListener(type, listener, useCapture);
-		}
-				
-		public function willTrigger(type:String):Boolean {
-			return _eventDispatcher.willTrigger(type);
-		}
-		//*/
+	
 	}
 		
 	

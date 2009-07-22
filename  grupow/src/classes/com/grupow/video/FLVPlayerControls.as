@@ -13,6 +13,7 @@
 
 package com.grupow.video 
 {
+	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -32,11 +33,15 @@ package com.grupow.video
 		private var _seeking:Boolean;
 		private var _isPlaying:Boolean;
 		
-		//
-		//
-		//TODO agregar dinamicamente los controles STOP,PLAY,SEEKBAR,TIME,VOLUME
-		//
-		//
+		protected var _seekBarControl:MovieClip;
+		protected var _stopControl:DisplayObject;
+		protected var _pauseResumeControl:MovieClip;
+		protected var _audioControl:MovieClip;
+		protected var _currentTimeOutput:TextField;
+		
+		private var worker:Sprite;
+		
+		
 		public function FLVPlayerControls(flvPlayer:FLVPlayer = null) 
 		{
 			
@@ -46,44 +51,70 @@ package com.grupow.video
 			}
 			
 			_isPlaying = false;
-								
-			seekBar.addEventListener(SeekBarEvent.CHANGE, onChange, false, 0, true);
-			seekBar.addEventListener(SeekBarEvent.BEGIN_SCRUB, beginScrub_handler, false, 0, true);
-			seekBar.addEventListener(SeekBarEvent.END_SCRUB,endScrub_handler,false,0,true);
 			
-			stop_btn.addEventListener(MouseEvent.CLICK,stop_handler,false,0,true);
-			pauseResume_mc.addEventListener(MouseEvent.CLICK,playPause_handler,false,0,true);
-
-			audio_mc.buttonMode = true;
-			audio_mc.addEventListener(MouseEvent.CLICK,sound_handler,false,0,true);
+			
+			
+			this.addEventListener(Event.ADDED_TO_STAGE, added_handler, false, 0, true);
 		
+		}
+		
+		private function added_handler(e:Event):void 
+		{
+			removeEventListener(Event.ADDED_TO_STAGE, added_handler);
+			
+			worker = new Sprite();
+			worker.addEventListener(Event.ENTER_FRAME, set_handler, false, 0, true);
+		}
+		
+		private function set_handler(e:Event):void 
+		{
+			worker.removeEventListener(Event.ENTER_FRAME, set_handler);
+			worker.removeEventListener(Event.ENTER_FRAME, set_handler);
+			
+			if(_seekBarControl != null) {
+				_seekBarControl.addEventListener(SeekBarEvent.CHANGE, onChange, false, 0, true);
+				_seekBarControl.addEventListener(SeekBarEvent.BEGIN_SCRUB, beginScrub_handler, false, 0, true);
+				_seekBarControl.addEventListener(SeekBarEvent.END_SCRUB,endScrub_handler,false,0,true);
+			}
+			
+			if(_stopControl != null) {
+				_stopControl.addEventListener(MouseEvent.CLICK,stop_handler,false,0,true);
+			}
+			
+			if(_pauseResumeControl != null) {
+				_pauseResumeControl.addEventListener(MouseEvent.CLICK, playPause_handler, false, 0, true);
+			}
+						
+			if(_audioControl != null) {
+				_audioControl.buttonMode = true;
+				_audioControl.addEventListener(MouseEvent.CLICK,sound_handler,false,0,true);
+			}
+			
 		}
 		
 		private function stop_handler (e:Event):void 
 		{
-			pauseResume_mc.gotoAndStop(1);
+			_pauseResumeControl.gotoAndStop(1);
 			stopVideo();	
 		}
 
 		private function sound_handler (e:Event):void
 		{
-			if(audio_mc.currentFrame == 1) {
+			if(_audioControl.currentFrame == 1) {
 				setVideoVolume(0);
-				audio_mc.gotoAndStop(2);		
+				_audioControl.gotoAndStop(2);		
 			}else {
 				setVideoVolume(1);
-				audio_mc.gotoAndStop(1);
+				_audioControl.gotoAndStop(1);
 			}
 		}
 
 		private function playPause_handler (e:Event):void
 		{
-			if(pauseResume_mc.currentFrame == 2) {
+			if(_pauseResumeControl.currentFrame == 2) {
 				pauseVideo();
-				pauseResume_mc.gotoAndStop(1);
 			}else {
 				resumeVideo();
-				pauseResume_mc.gotoAndStop(2);
 			}
 		}
 		
@@ -103,9 +134,7 @@ package com.grupow.video
 		
 		private function onChange(e:SeekBarEvent):void 
 		{
-			//trace(":::onChange::: " + e.position);
 			this._flvPlayer.seek(_flvPlayer.duration * e.position);
-
 		}
 		
 		private function flvPlayerErrorEvent_handler(e:Event):void
@@ -120,25 +149,38 @@ package com.grupow.video
 				case FLVPlayerEvent.PLAYHEAD_UPDATE :
 													
 						if(!_seeking)
-							seekBar.position = _flvPlayer.position;
-							//_flvPlayer.time / _flvPlayer.duration;
+							_seekBarControl.position = _flvPlayer.position;
 					
-						time_txt.text = fixTime(_flvPlayer.time);	
+						if(_currentTimeOutput != null)
+							_currentTimeOutput.text = fixTime(_flvPlayer.time);	
 						
 						break;
 				case FLVPlayerEvent.READY :
 								
-						pauseResume_mc.gotoAndStop(2);
+						_pauseResumeControl.gotoAndStop(2);
 											
 						break;
 				case FLVPlayerEvent.STOPPED :
 				
 						trace("STOPPED");
 						
+						_pauseResumeControl.gotoAndStop(1);
+						
 						break;
+				
+				case FLVPlayerEvent.RESUME :
+				
+						trace("RESUME");
+						
+						_pauseResumeControl.gotoAndStop(2);
+						
+						break;
+				
 				case FLVPlayerEvent.PAUSED :
 				
 						trace("PAUSED");
+						
+						_pauseResumeControl.gotoAndStop(1);
 						
 						break;
 						
@@ -150,7 +192,7 @@ package com.grupow.video
 					
 				case FLVPlayerEvent.COMPLETE :
 						
-						pauseResume_mc.gotoAndStop(1);
+						_pauseResumeControl.gotoAndStop(1);
 				
 						break;
 				case FLVPlayerEvent.BUFFERING :
@@ -158,15 +200,15 @@ package com.grupow.video
 						break;
 				case FLVPlayerEvent.AUTO_REWOUND :
 				
-						this.seekBar.position = this.seekBar.min;
-						pauseResume_mc.gotoAndStop(1);
+						this._seekBarControl.position = this._seekBarControl.min;
+						_pauseResumeControl.gotoAndStop(1);
 						
 						break;	
 				
 				case FLVPlayerProgressEvent.PROGRESS :
 						
 						var evt:FLVPlayerProgressEvent = e as FLVPlayerProgressEvent;
-						seekBar.updateProgress(evt.bytesLoaded/evt.bytesTotal);
+						_seekBarControl.updateProgress(evt.bytesLoaded/evt.bytesTotal);
 						
 						break;
 				case FLVPlayerMetadataEvent.METADATA_RECEIVED :
@@ -211,6 +253,7 @@ package com.grupow.video
 			_flvPlayer.addEventListener(FLVPlayerEvent.PAUSED, flvPlayerEvent_handler, false, 0, true);
 			_flvPlayer.addEventListener(FLVPlayerEvent.START_PLAYING, flvPlayerEvent_handler , false, 0, true);
 			_flvPlayer.addEventListener(FLVPlayerEvent.STOPPED, flvPlayerEvent_handler, false, 0, true);
+			_flvPlayer.addEventListener(FLVPlayerEvent.RESUME, flvPlayerEvent_handler, false, 0, true);
 			
 			_flvPlayer.addEventListener(FLVPlayerProgressEvent.PROGRESS, flvPlayerEvent_handler , false, 0, true);
 			_flvPlayer.addEventListener(FLVPlayerMetadataEvent.METADATA_RECEIVED, flvPlayerEvent_handler, false, 0, true);
@@ -228,6 +271,7 @@ package com.grupow.video
 			_flvPlayer.removeEventListener(FLVPlayerEvent.PAUSED, flvPlayerEvent_handler);
 			_flvPlayer.removeEventListener(FLVPlayerEvent.START_PLAYING, flvPlayerEvent_handler);
 			_flvPlayer.removeEventListener(FLVPlayerEvent.STOPPED, flvPlayerEvent_handler);
+			_flvPlayer.removeEventListener(FLVPlayerEvent.RESUME, flvPlayerEvent_handler);
 			
 			_flvPlayer.removeEventListener(FLVPlayerProgressEvent.PROGRESS, flvPlayerEvent_handler);
 			_flvPlayer.removeEventListener(FLVPlayerMetadataEvent.METADATA_RECEIVED, flvPlayerEvent_handler);
@@ -278,21 +322,19 @@ package com.grupow.video
 		
 		public function dispose():void
 		{
+			_stopControl.removeEventListener(MouseEvent.CLICK,stop_handler);
+			_pauseResumeControl.removeEventListener(MouseEvent.CLICK,playPause_handler);
+			_audioControl.removeEventListener(MouseEvent.CLICK,sound_handler);
 			
-			stop_btn.removeEventListener(MouseEvent.CLICK,stop_handler);
-			pauseResume_mc.removeEventListener(MouseEvent.CLICK,playPause_handler);
-			audio_mc.removeEventListener(MouseEvent.CLICK,sound_handler);
+			_seekBarControl.removeEventListener(SeekBarEvent.CHANGE, onChange);
+			_seekBarControl.removeEventListener(SeekBarEvent.BEGIN_SCRUB, beginScrub_handler);
+			_seekBarControl.removeEventListener(SeekBarEvent.END_SCRUB, endScrub_handler);
 			
-			seekBar.removeEventListener(SeekBarEvent.CHANGE, onChange);
-			seekBar.removeEventListener(SeekBarEvent.BEGIN_SCRUB, beginScrub_handler);
-			seekBar.removeEventListener(SeekBarEvent.END_SCRUB,endScrub_handler);
 			removePlayerListeners();
-			
-			//this.parent.removeChild(this);
-			//this = null;
 		}
 		
-		public function get flvPlayer():FLVPlayer { 
+		public function get flvPlayer():FLVPlayer
+		{ 
 			return _flvPlayer;
 		}
 		

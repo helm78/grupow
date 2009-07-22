@@ -65,7 +65,7 @@ package com.grupow.video
 			
 			this.x = player.x;
 			this.y = this.player.y + this.player.height - (this.height + 5);
-			
+			//trace(this.player.y , this.player.height , (this.height + 5));
 		}
 			
 		public function get source():String { return _source; }
@@ -104,6 +104,7 @@ package com.grupow.video
 		{
 			output_txt.htmlText = text;
 			output_txt.width = this.player.width;
+			this.y = this.player.y + this.player.height - (this.height + 5);
 		}
 		
 		public function dispose():void
