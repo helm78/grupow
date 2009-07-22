@@ -42,6 +42,9 @@ package com.grupow.video
 			_isDragging = false;
 			_min = 0;
 			_max = 1;
+			
+			_xMax = track.width;
+			
 			slider_btn.addEventListener(MouseEvent.MOUSE_DOWN, onDown_handler, false, 0, true);
 
 			progressarBar.scaleX = 0;

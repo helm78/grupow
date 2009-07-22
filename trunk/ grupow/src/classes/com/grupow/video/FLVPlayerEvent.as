@@ -30,6 +30,7 @@ package com.grupow.video {
 		public static const STOPPED:String = "stoopped";
 		public static const PAUSED:String = "paused";
 		public static const START_PLAYING:String = "startplaying";
+		public static const RESUME:String = "resume";
 		
 		
 		public var time:Number;
