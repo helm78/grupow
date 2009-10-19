@@ -87,11 +87,19 @@
 	    
 	    private function onConnect(e:Event):void
         {
+			this.clear();
+			
             for each(var log:Object in history)
             {
                 send(log);
             }
         }
+		
+		public function clear():void
+		{
+			if(socket.connected)	
+				socket.send( "!SOS<clear/>\n" );	
+		}
 		
 		private function send(o:Object):void
         {
