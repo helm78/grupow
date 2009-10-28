@@ -90,6 +90,8 @@ package com.grupow.video {
 		private var _align:String;
 		private var _scaleMode:String;
 		private var _disposed:Boolean;
+		private var _clearbg:Boolean;
+		private var _isAdded:Boolean;
 		
 		public function FLVPlayer(width:int = 320, height:int = 240, initConn:Boolean = true )
 		{
@@ -104,6 +106,8 @@ package com.grupow.video {
 			
 			_align = FLVPlayerAlign.CENTER;
 			_scaleMode = FLVPlayerScaleMode.EXACT_FIT;
+			
+			_clearbg = false;
 			
 			init();
 			
@@ -126,7 +130,10 @@ package com.grupow.video {
 			//trace("__added_handler__");
 			//trace("_targetWidth: ", this.width);
 			//trace("_targetHeight: ", this.height);
-			//					
+			//
+			
+			_isAdded = true;
+			
 			_targetWidth = this.width;
 			_targetHeight = this.height;
 			_video.width = _targetWidth
@@ -146,17 +153,22 @@ package com.grupow.video {
 			
 			_video_container.mask = _video_mask;
 			
+			
+			
 			draw();
 			
+		
 			removeEventListener(Event.ADDED_TO_STAGE, added_handler);
 		}
 		
 		private function draw():void
-		{
-			_background.graphics.clear();
-			_background.graphics.beginFill(0, 1);
-			_background.graphics.drawRect(0, 0, _targetWidth, _targetHeight);
-			_background.graphics.endFill();
+		{	
+			if(!_clearbg) {
+				_background.graphics.clear();
+				_background.graphics.beginFill(0, 1);
+				_background.graphics.drawRect(0, 0, _targetWidth, _targetHeight);
+				_background.graphics.endFill();
+			}
 			
 			_video_mask.graphics.clear();
 			_video_mask.graphics.beginFill(0x00ff00, 0.2);
@@ -879,6 +891,13 @@ package com.grupow.video {
 				stop_handler();
 				this.dispatchEvent(new FLVPlayerEvent(FLVPlayerEvent.STOPPED, false, false, this.time));
 			}
+		}
+		
+		public function clearBackGround():void
+		{
+			_clearbg = true;
+			if(_isAdded)
+				_background.graphics.clear();
 		}
 		
 		public function clear():void
