@@ -25,12 +25,14 @@ package com.grupow.controls
 	public class WButton extends WAbstractControl
 	{
 		private var _label:String;
+		private var _enabled:Boolean;
 		
 		public function WButton()
 		{
 			super();
 			
 			_label = "label";
+			_enabled = true;
 			
 			this.label_mc.output_txt.autoSize = TextFieldAutoSize.LEFT;
 			this.label_mc.output_txt.wordWrap = false;
@@ -39,6 +41,9 @@ package com.grupow.controls
 			this.hit_mc.mouseEnabled = false;
 			
 			this.hitArea = this.hit_mc;
+			
+			this.width = hit_mc.width;
+			this.height = hit_mc.height;
 		}
 		
 		public function get label():String { return _label; }
@@ -46,10 +51,7 @@ package com.grupow.controls
 		public function set label(value:String):void 
 		{
 			_label = value;
-			
 			this.label_mc.output_txt.text = _label;
-			this.hit_mc.width = this.label_mc.output_txt.x + this.label_mc.output_txt.width;
-			this.hit_mc.height = this.label_mc.output_txt.height;
 		}
 		
 		protected override function init():void
@@ -67,7 +69,30 @@ package com.grupow.controls
 			this.removeEventListener(MouseEvent.ROLL_OVER, rollOver_handler, false);
 			this.removeEventListener(MouseEvent.ROLL_OUT, rollOut_handler, false);
 		}
+		
+		public function getEnabled():Boolean { return _enabled; }
+		
+		public function setEnabled(value:Boolean):void 
+		{
+			_enabled = value;
+			
+			if (_enabled) {
 				
+				this.addEventListener(MouseEvent.CLICK, click_handler, false, 0, true);
+				this.addEventListener(MouseEvent.ROLL_OVER, rollOver_handler, false, 0, true);
+				this.addEventListener(MouseEvent.ROLL_OUT, rollOut_handler, false, 0, true);
+			
+			}else {
+				
+				this.removeEventListener(MouseEvent.CLICK, click_handler, false);
+				this.removeEventListener(MouseEvent.ROLL_OVER, rollOver_handler, false);
+				this.removeEventListener(MouseEvent.ROLL_OUT, rollOut_handler, false);
+				
+			}
+			
+			this.mouseEnabled = _enabled;
+		}
+			
 		protected function click_handler(e:MouseEvent):void
 		{
 			
@@ -81,6 +106,12 @@ package com.grupow.controls
 		protected function rollOut_handler(e:MouseEvent):void
 		{
 			this.gotoAndPlay("out");
+		}
+		
+		override protected function draw():void 
+		{
+			this.hit_mc.width = this.width;
+			this.hit_mc.height = this.height;
 		}
 	}
 	
