@@ -64,6 +64,16 @@
 			traceLogger.includeTime = Log.INCLUDE_TIME;
 			traceLogger.addLogger(logger);			
 		}
+		
+		static public function registerFireBugTarget():void
+		{
+			var traceLogger:WFirebugTarget = new WFirebugTarget();
+			traceLogger.fieldSeparator = Log.FIELD_SEPARATOR;
+			traceLogger.includeCategory = Log.INCLUDE_CATEGORY;
+			traceLogger.includeLevel = Log.INCLUDE_LEVEL;
+			traceLogger.includeTime = Log.INCLUDE_TIME;
+			traceLogger.addLogger(logger);			
+		}
 			
 		static public function log(level:int, message:String, ...rest):void
 		{
