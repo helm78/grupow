@@ -69,8 +69,8 @@ package com.grupow.utils
 			var checktmp:Number = 0;
 			for (var i:Number=0; i<=arra.length; i++) {
 				if (arra[i] == value) {
-					break;
 					checktmp++;
+					break;
 				}
 			}
 			if (checktmp>0) {
