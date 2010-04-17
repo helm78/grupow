@@ -28,11 +28,10 @@ package com.grupow.utils
 		{
 			// derive values (centiseconds = 100th of a second)
 			//var milliseconds = Math.floor(milliseconds);
-			var centiseconds = Math.floor(milliseconds/10);
-			var seconds = Math.floor(centiseconds/100);
-			var minutes = Math.floor(seconds / 60);
-			//TODO added hours counter 
-			var hours =  Math.floor(seconds/3600000);
+			var centiseconds:Number = Math.floor(milliseconds/10);
+			var seconds:Number = Math.floor(centiseconds/100);
+			var minutes:Number = Math.floor(seconds / 60);
+			var hours:Number =  Math.floor(minutes/60);
 			// make sure values dont go beyond their
 			// respective ranges
 			centiseconds %= 100;
@@ -44,17 +43,8 @@ package com.grupow.utils
 			if (centiseconds < 10) centiseconds = "0" + centiseconds;
 			if (seconds < 10) seconds = "0" + seconds;
 			if (minutes < 10) minutes = "0" + minutes;
-			if (minutes < 10) hours = "0" + hours;
+			if (hours < 10) hours = "0" + hours;
 		
-			// return values separated by :
-			
-			//var output:String = seconds +":" + centiseconds;
-			//var output:String = minutes +":" + seconds;
-					
-			//if(format.split(":").length > 2)
-			// +":" + centiseconds;
-			
-			//TODO Added hours + centiseconds to the output 
 			var output:String = hours + ":" + minutes +":" + seconds + ":" + centiseconds;
 			
 			return output;
