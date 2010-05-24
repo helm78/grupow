@@ -2,7 +2,7 @@
 /**
  * 
  * Grupow IResizeable
- * Copyright (c) 2009 ruranga@grupow.com
+ * Copyright (c) 2010 ruranga@grupow.com
  * 
  * Released under MIT license:
  * http://www.opensource.org/licenses/mit-license.php
