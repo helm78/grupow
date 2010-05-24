@@ -2,7 +2,7 @@
 /**
  * 
  * Grupow AbstractView
- * Copyright (c) 2009 ruranga@grupow.com
+ * Copyright (c) 2010 ruranga@grupow.com
  * 
  * Released under MIT license:
  * http://www.opensource.org/licenses/mit-license.php
@@ -14,7 +14,12 @@ package com.grupow.display
 	import com.grupow.controls.WAbstractControl;
 	import com.grupow.events.ViewEvent;
 	import flash.display.MovieClip;
-	
+
+	/**
+	 * ...
+	 * @author Raúl Uranga
+	 */
+
 	public class AbstractView extends WAbstractControl implements IView
 	{
 		protected var _isOpen:Boolean;
@@ -24,7 +29,7 @@ package com.grupow.display
 			super();
 			_isOpen = false;
 		}
-		
+			
 		protected function opened_handler():void
 		{
 			this.dispatchEvent(new ViewEvent(ViewEvent.OPENED));
@@ -55,7 +60,6 @@ package com.grupow.display
 			if (!_isOpen) {
 				_isOpen = true;
 				open_hook();
-				this.gotoAndPlay("open");
 				this.dispatchEvent(new ViewEvent(ViewEvent.OPEN));
 			}
 		}
@@ -65,7 +69,6 @@ package com.grupow.display
 			if (_isOpen) {
 				_isOpen = false;
 				close_hook();
-				this.gotoAndPlay("close");
 				this.dispatchEvent(new ViewEvent(ViewEvent.CLOSE));
 			}
 		}
