@@ -776,6 +776,8 @@ package com.grupow.video {
 			_oTime = -1;
 			_cTime = -1;
 			
+			_isPaused = false;
+			
 			_stopped = false;
 			
 			_isComplete = false;

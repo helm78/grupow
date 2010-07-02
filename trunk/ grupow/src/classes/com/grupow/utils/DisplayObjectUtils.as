@@ -29,7 +29,7 @@ package com.grupow.utils
 			
 		}
 		
-		public static function stopAllChildrens(target:DisplayObjectContainer,recusive:Boolean = true):void 
+		public static function stopAllChildrens(target:DisplayObjectContainer,recursive:Boolean = true):void 
 		{
 				
 			for (var i = 0; i < target.numChildren ; i++) { 
@@ -39,7 +39,7 @@ package com.grupow.utils
 					var child:MovieClip = MovieClip(target.getChildAt(i))
 					child.stop();
 					
-					if (recusive) {
+					if (recursive) {
 						
 						DisplayObjectUtils.DEEP++;
 						
@@ -58,7 +58,7 @@ package com.grupow.utils
 			}
 		}
 		
-		public static function playAllChildrens(target:DisplayObjectContainer,recusive:Boolean = true):void 
+		public static function playAllChildrens(target:DisplayObjectContainer,recursive:Boolean = true):void 
 		{
 				
 			for (var i = 0; i < target.numChildren ; i++) { 
@@ -68,7 +68,7 @@ package com.grupow.utils
 					var child:MovieClip = MovieClip(target.getChildAt(i))
 					child.play();
 					
-					if (recusive) {
+					if (recursive) {
 						
 						DisplayObjectUtils.DEEP++;
 						
