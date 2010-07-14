@@ -29,6 +29,7 @@ package com.grupow.remoting
 		public function wRemotingService(gateway:String, service:String, useOperationPooling:Boolean = true)
 		{
 			super(gateway, service, useOperationPooling);
+			trace("Warning: this is a deprecated version please use RemotingService instead of this.");
 		}
 			
 		public function dispose():void
