@@ -1,6 +1,6 @@
 ﻿package com.grupow.debug 
 {
-	import com.grupow.debug.targets.WSOSTarget;
+	import com.grupow.debug.targets.WLineFormattedTarget;
 	import com.grupow.debug.targets.WTraceTarget;
 	
 	/**
@@ -9,70 +9,26 @@
 	 */
 	public class Log 
 	{
-		private static var _instance:Log;
-		private static var _allowInstantiation:Boolean;
-		
 		private static const logger:WILogger = WLog.getLogger("default");
 		
-		public static var FIELD_SEPARATOR = " ";
-		public static var INCLUDE_CATEGORY = false;
-		public static var INCLUDE_TIME = false;
-		public static var INCLUDE_LEVEL = true;
+		public static var FIELD_SEPARATOR:String = " ";
+		public static var INCLUDE_CATEGORY:Boolean = false;
+		public static var INCLUDE_TIME:Boolean = false;
+		public static var INCLUDE_LEVEL:Boolean = true;
 
-		
-		private static var initialize:Log = Log.getInstance();
-		
 		public static var verbose:Boolean = true;
 		
 		public function Log () {
 			
-			if (!_allowInstantiation) {
-				throw new Error("Instantiation failed: Use Log.getInstance() instead of new.");
-				return;
-			}
-			
-			var traceLogger:WTraceTarget = new WTraceTarget();
-			//traceLogger.addLogger(logger);		
 		}
 		
-		public static function getInstance():Log
+		static public function registerTarget(target:WLineFormattedTarget):void
 		{
-			if (_instance == null) {
-				_allowInstantiation = true;
-				_instance = new Log();
-				_allowInstantiation = false;
-			}
-			
-			return _instance;
-		}
-		
-		static public function registerSOSTarget():void
-		{
-			var sosLogger:WSOSTarget = new WSOSTarget();
-			sosLogger.fieldSeparator = Log.FIELD_SEPARATOR;
-			sosLogger.includeCategory = Log.INCLUDE_CATEGORY;
-			sosLogger.includeLevel = Log.INCLUDE_LEVEL;
-			sosLogger.includeTime = Log.INCLUDE_TIME;
-			sosLogger.addLogger(logger);			
-		}
-		static public function registerTraceTarget():void
-		{
-			var traceLogger:WTraceTarget = new WTraceTarget();
-			traceLogger.fieldSeparator = Log.FIELD_SEPARATOR;
-			traceLogger.includeCategory = Log.INCLUDE_CATEGORY;
-			traceLogger.includeLevel = Log.INCLUDE_LEVEL;
-			traceLogger.includeTime = Log.INCLUDE_TIME;
-			traceLogger.addLogger(logger);			
-		}
-		
-		static public function registerFireBugTarget():void
-		{
-			var traceLogger:WFirebugTarget = new WFirebugTarget();
-			traceLogger.fieldSeparator = Log.FIELD_SEPARATOR;
-			traceLogger.includeCategory = Log.INCLUDE_CATEGORY;
-			traceLogger.includeLevel = Log.INCLUDE_LEVEL;
-			traceLogger.includeTime = Log.INCLUDE_TIME;
-			traceLogger.addLogger(logger);			
+			target.fieldSeparator = Log.FIELD_SEPARATOR;
+			target.includeCategory = Log.INCLUDE_CATEGORY;
+			target.includeLevel = Log.INCLUDE_LEVEL;
+			target.includeTime = Log.INCLUDE_TIME;
+			target.addLogger(logger);			
 		}
 			
 		static public function log(level:int, message:String, ...rest):void
