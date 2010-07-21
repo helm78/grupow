@@ -109,7 +109,50 @@ package com.grupow.utils
 
 		};
 		
+		public static function trim (str:String):String
+		{
+			var s:String = str.toString();
+			return lTrim(rTrim(s));
+		};
 		
+		public static function  formatTime(milliseconds:Number):String
+		{
+			// derive values (centiseconds = 100th of a second)
+			//var milliseconds = Math.floor(milliseconds);
+			var centiseconds = Math.floor(milliseconds/10);
+			var seconds = Math.floor(centiseconds/100);
+			var minutes = Math.floor(seconds / 60);
+			var hours =  Math.floor(minutes/60);
+
+			centiseconds %= 100;
+			seconds %= 60;
+			minutes %= 60;
+			hours %= 24;
+
+			// padd with 0's if values less than 2 digits (less than 10)
+			if (centiseconds < 10) centiseconds = "0" + centiseconds;
+			if (seconds < 10) seconds = "0" + seconds;
+			if (minutes < 10) minutes = "0" + minutes;
+			if (hours < 10) hours = "0" + hours;
+
+			return	hours +":"+ minutes +":"+ seconds +":"+ centiseconds;
+		}
+
+		static public function formatNumber(number:Number, maxDecimals:int = 0):String 
+		{
+			var str:String = number.toFixed(maxDecimals).toString();
+
+			var hasSep:Boolean = str.indexOf(".") == -1;
+			var sep:int = hasSep ? str.length : str.indexOf(".");
+
+			var ret:String = (hasSep ? "" : ".") + str.substr(sep+1);
+			var i:int = 0;
+
+			while (i + 3 < (str.substr(0, 1) == "-" ? sep-1 : sep)) {
+				ret = "," + str.substr(sep - (i += 3), 3) + ret;
+			}
+			return str.substr(0,sep - i) + ret;
+		}
 		
 		private static var TAB = 9;
 		private static var LINEFEED = 10;
@@ -134,13 +177,6 @@ package com.grupow.utils
 				i--;
 			}
 			return s.substring(0, i+1);
-		};
-		
-		public static function trim (str:String):String
-		{
-			var s:String = str.toString();
-			return lTrim(rTrim(s));
-		};
-		
+		};		
 	}
 }
